@@ -1,0 +1,607 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Email System";
+}
+
+<style>
+
+    /* Existing base styles */
+
+    .table thead th {
+        background-color: #f8f9fa; /* สีเทาอ่อนแบบ Bootstrap */
+        color: #495057; /* สีตัวอักษรเทาเข้ม */
+        font-weight: 500;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    /* ปรับสีส่วนหัวกล่องข้อความด้วย */
+    .card-header {
+        background-color: #f8f9fa !important;
+        color: #495057;
+    }
+
+    .form-control {
+        color: #000000;
+        padding: 10px 15px;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+        width: 100%;
+        font-size: 14px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+        position: relative;
+        padding: 0 15px;
+    }
+
+        .form-group label {
+            color: #000000;
+            font-weight: 500;
+            display: inline-block;
+            margin-bottom: 8px;
+            margin-left: 8px;
+        }
+
+    .empty-state {
+        padding: 40px;
+        text-align: center;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: 1px dashed #dee2e6;
+    }
+
+        .empty-state h5 {
+            color: darkgrey;
+        }
+
+    .unread {
+        font-weight: 600;
+        background-color: #f8f9fa;
+    }
+
+    .email-list {
+        max-height: 600px;
+        overflow-y: auto;
+    }
+
+    .sidebar {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    /* Enhanced Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0);
+        transition: background-color 0.3s ease;
+        color: #000000;
+    }
+    /* ปรับขนาดของ Modal */
+    .modal-dialog {
+        margin: 3% auto;
+        width: 90%; /* ปรับความกว้างของ dialog เป็น 90% ของหน้าจอ */
+        max-width: 1200px; /* กำหนดความกว้างสูงสุดไม่ให้กว้างเกินไป */
+    }
+
+        .modal.show {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+    .modal-content {
+        background-color: white;
+        margin: 3% auto;
+        width: 90%;
+        max-width: 700px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        padding: 20px;
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: all 0.3s ease;
+    }
+
+    .modal.show .modal-content {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .modal-header {
+        padding: 20px;
+        border-bottom: 1px solid #dee2e6;
+        margin: -20px -20px 20px -20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-title {
+        font-size: 20px;
+        font-weight: 500;
+        margin: 0;
+    }
+
+    .close-button {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #5f6368;
+        padding: 5px;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s;
+    }
+
+        .close-button:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+    /* Form Enhancements */
+    .email-form {
+        padding: 0 20px;
+    }
+
+
+    .message-body {
+        min-height: 200px !important;
+        resize: vertical;
+    }
+
+    .required {
+        color: #d93025;
+        margin-left: 4px;
+    }
+
+    .modal-footer {
+        padding: 20px;
+        margin: 20px -20px -20px -20px;
+        border-top: 1px solid #dee2e6;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 14px;
+        transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background-color: #0b5ed7;
+            border-color: #0a58ca;
+        }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        color: white;
+    }
+
+        .btn-secondary:hover {
+            background-color: #5c636a;
+            border-color: #565e64;
+        }
+
+    /* Loading Overlay */
+    .loading-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.8);
+        z-index: 2000;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+        .loading-overlay.show {
+            opacity: 1;
+        }
+
+    .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #3498db;
+        border-radius: 50%;
+        position: relative;
+    }
+
+        .loading-spinner::after {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border: 5px solid transparent;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            transition: transform 0.8s linear;
+            transform: rotate(0deg);
+        }
+
+    .loading-overlay.show .loading-spinner::after {
+        transform: rotate(360deg);
+    }
+
+    /* เพิ่ม CSS สำหรับตาราง */
+    .table {
+        color: #000000; /* กำหนดสีตัวอักษรเป็นสีดำ */
+    }
+
+        /* สำหรับแถวในตาราง */
+        .table tbody tr {
+            color: #000000;
+            background-color: #f8f9fa; /* สีพื้นหลังเทาอ่อน */
+        }
+
+            /* สำหรับ hover effect */
+            .table tbody tr:hover {
+                background-color: #e9ecef; /* สีเมื่อ hover */
+                color: #000000;
+            }
+
+    /* สำหรับข้อความที่ยังไม่ได้อ่าน */
+    .unread {
+        font-weight: 600;
+        background-color: #f8f9fa;
+        color: #000000;
+    }
+
+    .align-middle{
+        color: #000000;
+    }
+
+    .email-detail-header {
+        background-color: #f8f9fa;
+        padding: 15px 20px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .email-metadata {
+        margin: 15px 0;
+        color: #666;
+    }
+
+    .metadata-item {
+        margin-bottom: 8px;
+    }
+
+    .metadata-label {
+        font-weight: 500;
+        color: #495057;
+        width: 80px;
+        display: inline-block;
+    }
+
+    .email-content {
+        padding: 20px;
+        white-space: pre-wrap;
+        color: #000000;
+        min-height: 200px;
+    }
+
+    /* ปรับขนาดของ Modal สำหรับอ่านอีเมล */
+    .modal-dialog-reading {
+        max-width: 800px;
+    }
+</style>
+
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-spinner"></div>
+</div>
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- ซ้าย: เมนูและการกระทำ -->
+        <div class="col-md-3">
+            <div class="sidebar">
+                <div class="d-grid gap-2 mb-4">
+                    <button onclick="openEmailModal()" class="btn btn-primary">
+                        <i class="fas fa-pen me-2"></i>เขียนจดหมายใหม่
+                    </button>
+                </div>
+
+                <div class="list-group">
+                    <a href="#" class="list-group-item list-group-item-action active">
+                        <i class="fas fa-inbox me-2"></i>กล่องข้อความ
+                        <span class="badge bg-primary float-end">
+                            @Model.listEmails.Count(e => !e.EmailIsRead)
+                        </span>
+
+
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="fas fa-paper-plane me-2"></i>ส่งแล้ว
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="fas fa-trash me-2"></i>ถังขยะ
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ขวา: รายการอีเมล -->
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-inbox me-2"></i>กล่องข้อความ
+                    </h5>
+                    <span class="email-count">
+                        ทั้งหมด @Model.listEmails.Count() ข้อความ
+                    </span>
+                </div>
+
+                <div class="card-body p-0">
+                    <div class="email-list">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>จาก</th>
+                                    <th>หัวข้อ</th>
+                                    <th>วันที่/เวลา</th>
+                                    <th class="text-center">การกระทำ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.listEmails.Any())
+                                {
+                                    @foreach (var email in Model.listEmails)
+                                    {
+                                        <tr class="@(!email.EmailIsRead ? "unread" : "")">
+                                            <td class="align-middle">@email.EmailSender</td>
+                                            <td class="align-middle">@email.EmailSubject</td>
+                                            <td class="align-middle">@email.EmailDate</td>
+                                            <td class="align-middle text-center">
+                                                <div class="action-buttons">
+                                                    <!-- ปุ่มดูข้อความ -->
+                                                    <button onclick="openReadEmailModal(@email.EmailID)" class="btn btn-sm btn-outline-primary" title="อ่าน">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <!-- ปุ่มลบข้อความ -->
+                                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteEmail(@email.EmailID)" title="ลบ">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="4">
+                                            <div class="empty-state text-center py-5">
+                                                <i class="fas fa-inbox fa-3x mb-3 text-muted"></i>
+                                                <h5>ไม่มีข้อความ</h5>
+                                                <p class="text-muted">ข้อความใหม่จะปรากฏที่นี่</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Email Compose Modal -->
+<div id="emailModal" class="modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">ข้อความใหม่</h5>
+                <button type="button" class="close" onclick="closeEmailModal()">×</button>
+            </div>
+            <form id="emailForm" method="post" onsubmit="sendEmail(event)">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">ถึง (ชื่อผู้รับ)<span class="text-danger">*</span></label>
+                        <input type="text" id="recipientUsername" name="recipientUsername" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">หัวข้อ<span class="text-danger">*</span></label>
+                        <input type="text" id="subject" name="subject" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">ข้อความ<span class="text-danger">*</span></label>
+                        <textarea id="body" name="body" class="form-control" rows="5" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeEmailModal()">ยกเลิก</button>
+                    <button type="submit" class="btn btn-primary">ส่งข้อความ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="readEmailModal" class="modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-reading">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="readEmailSubject"></h5>
+                <button type="button" class="close" onclick="closeReadEmailModal()">×</button>
+            </div>
+            <div class="email-detail-header">
+                <div class="email-metadata">
+                    <div class="metadata-item">
+                        <span class="metadata-label">จาก:</span>
+                        <span id="readEmailSender"></span>
+                    </div>
+                    <div class="metadata-item">
+                        <span class="metadata-label">วันที่:</span>
+                        <span id="readEmailDate"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="email-content" id="readEmailBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeReadEmailModal()">ปิด</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Modal functions
+        function openEmailModal() {
+            const modal = document.getElementById('emailModal');
+            modal.style.display = 'block';
+            setTimeout(() => {
+                modal.classList.add('show');
+            }, 10);
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeEmailModal() {
+            const modal = document.getElementById('emailModal');
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+            document.body.style.overflow = '';
+            document.getElementById('emailForm').reset();
+        }
+
+        // ปิด Modal เมื่อคลิกพื้นหลัง
+        window.onclick = function (event) {
+            const modal = document.getElementById('emailModal');
+            if (event.target === modal) {
+                closeEmailModal();
+            }
+        }
+        async function saveMessage(event) {
+            event.preventDefault(); // ป้องกันการส่งฟอร์มแบบปกติ
+
+            const recipientUsername = document.getElementById("recipientUsername").value;
+            const subject = document.getElementById("subject").value;
+            const body = document.getElementById("body").value;
+
+            try {
+                const response = await fetch('/Index?handler=SaveMessage', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify({ recipientUsername, subject, body })
+                });
+
+                // ตรวจสอบสถานะของการตอบสนองจากเซิร์ฟเวอร์
+                if (!response.ok) {
+                    throw new Error('เกิดข้อผิดพลาดจากเซิร์ฟเวอร์');
+                }
+
+                // ลองแปลงการตอบสนองเป็น JSON
+                const result = await response.json();
+
+                if (result.success) {
+                    alert("บันทึกข้อความสำเร็จ!"); // แจ้งเตือนเมื่อบันทึกสำเร็จ
+                    closeEmailModal(); // ปิด modal หลังจากบันทึกข้อความสำเร็จ
+                } else {
+                    alert("เกิดข้อผิดพลาด: " + result.message); // แจ้งเตือนถ้ามีข้อผิดพลาด
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("เกิดข้อผิดพลาดในการบันทึกข้อความ");
+            }
+        }
+
+        async function openReadEmailModal(emailId) {
+            try {
+                const response = await fetch(`/Index?handler=ReadEmail&emailId=${emailId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const emailData = await response.json();
+
+                if (emailData.error) {
+                    throw new Error(emailData.error);
+                }
+
+                document.getElementById('readEmailSubject').textContent = emailData.emailSubject;
+                document.getElementById('readEmailSender').textContent = emailData.emailSender;
+                document.getElementById('readEmailDate').textContent = new Date(emailData.emailDate).toLocaleString();
+                document.getElementById('readEmailBody').textContent = emailData.emailMessage;
+
+                const modal = document.getElementById('readEmailModal');
+                modal.style.display = 'block';
+                setTimeout(() => {
+                    modal.classList.add('show');
+                }, 10);
+                document.body.style.overflow = 'hidden';
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('เกิดข้อผิดพลาดในการโหลดข้อความ: ' + error.message);
+            }
+        }
+
+        function closeReadEmailModal() {
+            const modal = document.getElementById('readEmailModal');
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+            document.body.style.overflow = '';
+        }
+
+        // อัพเดตการจัดการคลิกพื้นหลัง Modal
+        window.onclick = function (event) {
+            const emailModal = document.getElementById('emailModal');
+            const readEmailModal = document.getElementById('readEmailModal');
+            if (event.target === emailModal) {
+                closeEmailModal();
+            } else if (event.target === readEmailModal) {
+                closeReadEmailModal();
+            }
+        }
+    </script>
+}
+
