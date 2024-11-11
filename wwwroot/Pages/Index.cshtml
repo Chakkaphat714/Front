@@ -278,6 +278,40 @@
     .align-middle{
         color: #000000;
     }
+
+    .email-detail-header {
+        background-color: #f8f9fa;
+        padding: 15px 20px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .email-metadata {
+        margin: 15px 0;
+        color: #666;
+    }
+
+    .metadata-item {
+        margin-bottom: 8px;
+    }
+
+    .metadata-label {
+        font-weight: 500;
+        color: #495057;
+        width: 80px;
+        display: inline-block;
+    }
+
+    .email-content {
+        padding: 20px;
+        white-space: pre-wrap;
+        color: #000000;
+        min-height: 200px;
+    }
+
+    /* ปรับขนาดของ Modal สำหรับอ่านอีเมล */
+    .modal-dialog-reading {
+        max-width: 800px;
+    }
 </style>
 
 <!-- Loading Overlay -->
@@ -414,6 +448,33 @@
     </div>
 </div>
 
+<div id="readEmailModal" class="modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-reading">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="readEmailSubject"></h5>
+                <button type="button" class="close" onclick="closeReadEmailModal()">×</button>
+            </div>
+            <div class="email-detail-header">
+                <div class="email-metadata">
+                    <div class="metadata-item">
+                        <span class="metadata-label">จาก:</span>
+                        <span id="readEmailSender"></span>
+                    </div>
+                    <div class="metadata-item">
+                        <span class="metadata-label">วันที่:</span>
+                        <span id="readEmailDate"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="email-content" id="readEmailBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeReadEmailModal()">ปิด</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     <script>
@@ -481,8 +542,63 @@
             }
         }
 
+        async function openReadEmailModal(emailId) {
+            try {
+                const response = await fetch(`/Index?handler=ReadEmail&emailId=${emailId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
 
-        
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const emailData = await response.json();
+
+                if (emailData.error) {
+                    throw new Error(emailData.error);
+                }
+
+                document.getElementById('readEmailSubject').textContent = emailData.emailSubject;
+                document.getElementById('readEmailSender').textContent = emailData.emailSender;
+                document.getElementById('readEmailDate').textContent = new Date(emailData.emailDate).toLocaleString();
+                document.getElementById('readEmailBody').textContent = emailData.emailMessage;
+
+                const modal = document.getElementById('readEmailModal');
+                modal.style.display = 'block';
+                setTimeout(() => {
+                    modal.classList.add('show');
+                }, 10);
+                document.body.style.overflow = 'hidden';
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('เกิดข้อผิดพลาดในการโหลดข้อความ: ' + error.message);
+            }
+        }
+
+        function closeReadEmailModal() {
+            const modal = document.getElementById('readEmailModal');
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+            document.body.style.overflow = '';
+        }
+
+        // อัพเดตการจัดการคลิกพื้นหลัง Modal
+        window.onclick = function (event) {
+            const emailModal = document.getElementById('emailModal');
+            const readEmailModal = document.getElementById('readEmailModal');
+            if (event.target === emailModal) {
+                closeEmailModal();
+            } else if (event.target === readEmailModal) {
+                closeReadEmailModal();
+            }
+        }
     </script>
 }
 

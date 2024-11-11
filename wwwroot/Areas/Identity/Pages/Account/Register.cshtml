@@ -1,0 +1,163 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, #002366 0%, #0066cc 100%);
+        }
+
+        .register-container {
+            min-height: 100vh;
+        }
+
+        .brand-text {
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        .curved-shape {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40%;
+            background: radial-gradient(circle at bottom right, #0080ff, transparent);
+            opacity: 0.3;
+            border-radius: 100% 0 0 0;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .btn-register {
+            background: #0066cc;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+            .btn-register:hover {
+                background: #0052a3;
+            }
+
+        .login-link {
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .register-box .col-lg-6 .w-100 {
+            padding-top: 30px; /* เพิ่มระยะห่างจากขอบบน */
+        }
+
+        .text-center {
+            padding-bottom: 30px;
+        }
+
+        /* Center content */
+        .center-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .register-box {
+            width: 100%;
+            max-width: 1200px;
+            margin: auto;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            flex-grow: 1; /* ให้กล่องยืดหยุ่นเพิ่มสูงขึ้นได้ */
+        }
+
+        .d-grid {
+            padding-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="center-wrapper">
+        <div class="register-box">
+            <div class="row g-0">
+                <!-- Left section - Background and Logo -->
+                <div class="col-lg-6 bg-gradient-primary d-flex align-items-center position-relative" style="min-height: 600px;">
+                    <div class="px-5">
+                        <h2 class="brand-text mb-3">Presented by</h2>
+                        <h1 class="brand-text display-4 fw-bold">Epic Software</h1>
+                    </div>
+                    <div class="curved-shape"></div>
+                </div>
+
+                <!-- Right section - Register Form -->
+                <div class="col-lg-6 d-flex align-items-center" style="min-height: 600px;">
+                    <div class="w-100 px-5">
+                        <div class="mb-5">
+                            <h2 class="fw-bold mb-1">Data Inter link</h2>
+                            <p class="text-muted">Your Instant Email Delivery Solution</p>
+                        </div>
+
+                        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                            <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
+
+                            <div class="mb-4">
+                                <input asp-for="Input.FirstName" class="form-control form-control-lg" placeholder="First Name" autocomplete="firstname" aria-required="true" />
+                                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-4">
+                                <input asp-for="Input.LastName" class="form-control form-control-lg" placeholder="Last Name" autocomplete="lastname" aria-required="true" />
+                                <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-4">
+                                <input asp-for="Input.MobilePhone" class="form-control form-control-lg" placeholder="Mobile Phone" autocomplete="mobilephone" aria-required="true" />
+                                <span asp-validation-for="Input.MobilePhone" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-4">
+                                <input asp-for="Input.UserName" class="form-control form-control-lg" placeholder="Username" autocomplete="username" aria-required="true" />
+                                <span asp-validation-for="Input.UserName" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-4">
+                                <input asp-for="Input.Password" class="form-control form-control-lg" placeholder="Password" type="password" autocomplete="new-password" aria-required="true" />
+                                <span asp-validation-for="Input.Password" class="text-danger"></span>
+                            </div>
+
+                            <!-- ปุ่ม Register และปุ่มกลับไปยังหน้า login -->
+                            <div class="d-grid gap-3">
+                                <button id="registerSubmit" type="submit" class="btn btn-register btn-lg text-white">
+                                    Register
+                                </button>
+                                <a asp-page="/Account/Login" class="btn btn-secondary btn-lg">Already have an account? Login</a>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }
+</body>
+</html>

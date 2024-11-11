@@ -1,0 +1,206 @@
+/* Base styles */
+body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Icon styles */
+#moon-icon {
+    color: #2c3e50;
+    transition: color 0.3s ease;
+}
+
+#sun-icon {
+    color: #f39c12;
+    transition: color 0.3s ease;
+}
+
+body.dark-theme #moon-icon {
+    color: #ffffff;
+}
+
+body.dark-theme #sun-icon {
+    color: #f39c12;
+}
+
+/* Light theme (default) */
+.card {
+    background-color: #ffffff;
+    color: #000000;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.card-header {
+    background-color: #f8f9fa !important;
+    color: #495057;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.table {
+    color: #000000;
+    transition: all 0.3s ease;
+}
+
+    .table thead th {
+        background-color: #f8f9fa;
+        color: #495057;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .table tbody tr {
+        background-color: #ffffff;
+        color: #000000;
+    }
+
+        .table tbody tr:hover {
+            background-color: #e9ecef;
+        }
+
+.sidebar {
+    background: #f8f9fa;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.list-group-item {
+    background-color: #ffffff;
+    color: #000000;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark theme */
+body.dark-theme {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+    body.dark-theme .card {
+        background-color: #1e1e1e;
+        color: #ffffff;
+    }
+
+    body.dark-theme .card-header {
+        background-color: #2d2d2d !important;
+        color: #ffffff;
+    }
+
+    body.dark-theme .table {
+        color: #ffffff;
+    }
+
+        body.dark-theme .table thead th {
+            background-color: #2d2d2d;
+            color: #ffffff;
+            border-bottom: 2px solid #404040;
+        }
+
+        body.dark-theme .table tbody tr {
+            background-color: #1e1e1e;
+            color: #ffffff;
+        }
+
+            body.dark-theme .table tbody tr:hover {
+                background-color: #2d2d2d;
+            }
+
+    body.dark-theme .unread {
+        background-color: #2d2d2d;
+        color: #ffffff;
+    }
+
+    body.dark-theme .sidebar {
+        background: #1e1e1e;
+        color: #ffffff;
+    }
+
+    body.dark-theme .list-group-item {
+        background-color: #2d2d2d;
+        color: #ffffff;
+        border-color: #404040;
+    }
+
+        body.dark-theme .list-group-item:hover {
+            background-color: #363636;
+        }
+
+        body.dark-theme .list-group-item.active {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+    /* Email modals dark theme */
+    body.dark-theme .modal-content {
+        background-color: #1e1e1e;
+        color: #ffffff;
+    }
+
+    body.dark-theme .modal-header {
+        background-color: #2d2d2d;
+        border-bottom: 1px solid #404040;
+    }
+
+        body.dark-theme .modal-header .modal-title {
+            color: #ffffff;
+        }
+
+    body.dark-theme .modal-footer {
+        background-color: #2d2d2d;
+        border-top: 1px solid #404040;
+    }
+
+    body.dark-theme .form-control {
+        background-color: #2d2d2d;
+        color: #ffffff;
+        border-color: #404040;
+    }
+
+        body.dark-theme .form-control:focus {
+            background-color: #363636;
+            color: #ffffff;
+            border-color: #0d6efd;
+        }
+
+    /* Email reading modal specific styles */
+    body.dark-theme .email-detail-header {
+        background-color: #2d2d2d;
+        border-bottom: 1px solid #404040;
+    }
+
+    body.dark-theme .metadata-label {
+        color: #ffffff;
+    }
+
+    body.dark-theme .email-metadata {
+        color: #ffffff;
+    }
+
+    body.dark-theme .email-content {
+        color: #ffffff;
+    }
+
+    body.dark-theme #readEmailSubject,
+    body.dark-theme #readEmailSender,
+    body.dark-theme #readEmailDate,
+    body.dark-theme #readEmailBody {
+        color: #ffffff;
+    }
+
+    body.dark-theme .empty-state {
+        background-color: #1e1e1e;
+        border-color: #404040;
+    }
+
+/* Close button style */
+body.dark-theme .close {
+    color: #ffffff;
+}
+
+/* Email modal content */
+body.dark-theme #emailModal .modal-content,
+body.dark-theme #readEmailModal .modal-content {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+/* Form labels in dark mode */
+body.dark-theme .form-label {
+    color: #ffffff;
+}
